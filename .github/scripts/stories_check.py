@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+"""Check the project User Stories and render a Markdown report."""
+
+from __future__ import annotations
+
+import os
+import re
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[2]
+STORIES_PATH = ROOT / "stories" / "Kartenverwaltung_User_Stories.md"
+GLOSSARY_PATH = ROOT / "quellen" / "Glossar.md"
+PROTOTYPE_PATH = ROOT / "prototyp" / "kartenverwaltung.html"
+
+
+@dataclass(frozen=True)
+class Finding:
+    level: str
+    location: str
+    message: str
+
+
+@dataclass(frozen=True)
+class Story:
+    story_id: str
+    title: str
+    text: str
+    line: int
+
+
+def parse_stories(text: str) -> list[Story]:
+    headings = list(
+        re.finditer(r"(?m)^##\s+(US-\d+)\s+(.+?)\s*$", text)
+    )
+    stories = []
+    for index, heading in enumerate(headings):
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
+        stories.append(
+            Story(
+                story_id=heading.group(1),
+                title=heading.group(2).strip(),
+                text=text[heading.end() : end],
+                line=text.count("\n", 0, heading.start()) + 1,
+            )
+        )
+    return stories
+
+
+def parse_forbidden_terms(glossary: str) -> list[tuple[str, re.Pattern[str]]]:
+    terms: list[tuple[str, re.Pattern[str]]] = []
+    for line in glossary.splitlines():
+        if not line.startswith("|"):
+            continue
+        columns = [column.strip() for column in line.strip("|").split("|")]
+        if len(columns) < 3 or columns[0] == "Begriff" or set(columns[0]) <= {"-", ":"}:
+            continue
+        for raw_term in columns[2].split(","):
+            term = raw_term.strip().strip("*`")
+            if not term or term in {"–", "-"}:
+                continue
+            if term == "PIN (ohne Zusatz)":
+                pattern = re.compile(r"(?<![\w-])PIN(?![\w-])", re.IGNORECASE)
+                term = "PIN"
+            else:
+                expression = r"\s+".join(re.escape(part) for part in term.split())
+                pattern = re.compile(
+                    rf"(?<!\w){expression}(?!\w)", re.IGNORECASE
+                )
+            terms.append((term, pattern))
+    return terms
+
+
+def _field(text: str, name: str) -> str | None:
+    match = re.search(
+        rf"(?m)^\*\*{re.escape(name)}:\*\*\s*(.*?)\s*$", text
+    )
+    return match.group(1).strip() if match else None
+
+
+def _criteria_text(text: str) -> str | None:
+    heading = re.search(r"(?m)^\*\*Akzeptanzkriterien\*\*\s*$", text)
+    if not heading:
+        return None
+    following_heading = re.search(
+        r"(?m)^(?:\*\*[^*\n].*?\*\*|---)\s*$", text[heading.end() :]
+    )
+    end = heading.end() + following_heading.start() if following_heading else len(text)
+    return text[heading.end() : end].strip()
+
+
+def _line_of(text: str, substring: str, start_line: int) -> int:
+    offset = text.lower().find(substring.lower())
+    return start_line + (text.count("\n", 0, offset) if offset >= 0 else 0)
+
+
+def check_content(
+    stories_text: str,
+    glossary_text: str,
+    prototype_text: str | None = None,
+) -> list[Finding]:
+    findings: list[Finding] = []
+    stories = parse_stories(stories_text)
+    if not stories:
+        return [Finding("Alarm", "stories/Kartenverwaltung_User_Stories.md:1", "Keine Story-Abschnitte mit US-Kennung gefunden.")]
+
+    allowed_criteria: dict[str, set[str]] = {}
+    forbidden_terms = parse_forbidden_terms(glossary_text)
+    vague_terms = ("zeitnah", "schnell", "einfach", "sicher")
+
+    for story in stories:
+        location = f"stories/Kartenverwaltung_User_Stories.md:{story.line}"
+        story_text = _field(story.text, "Story") or ""
+        source = _field(story.text, "Quelle")
+        criteria = _criteria_text(story.text)
+
+        if not re.search(r"\bAls\s+.+?\s+möchte\s+ich\b", story_text, re.IGNORECASE):
+            findings.append(Finding("Alarm", location, f"{story.story_id}: Story ohne Rolle im Format „Als … möchte ich“."))
+        if not source:
+            findings.append(Finding("Alarm", location, f"{story.story_id}: Quelle fehlt."))
+        if criteria is None:
+            findings.append(Finding("Alarm", location, f"{story.story_id}: Akzeptanzkriterien fehlen."))
+            criteria = ""
+        elif not re.search(r"(?m)^\s*[-*]\s*AK\d+\s*:", criteria):
+            placeholder = re.fullmatch(r"\s*[-*]?\s*noch offen\s*", criteria, re.IGNORECASE)
+            if not placeholder:
+                findings.append(Finding("Alarm", location, f"{story.story_id}: Akzeptanzkriterien fehlen (außer „noch offen“)."))
+
+        criterion_ids = set(re.findall(r"(?m)^\s*[-*]\s*(AK\d+)\s*:", criteria))
+        allowed_criteria[story.story_id] = criterion_ids
+
+        content = f"{story_text}\n{criteria}"
+        for term in vague_terms:
+            if re.search(rf"\b{re.escape(term)}\b", content, re.IGNORECASE):
+                line = _line_of(story.text, term, story.line)
+                findings.append(Finding("Hinweis", f"stories/Kartenverwaltung_User_Stories.md:{line}", f"{story.story_id}: Unbestimmter Begriff „{term}“."))
+        if not re.search(r"\bdamit\b", story_text, re.IGNORECASE):
+            findings.append(Finding("Hinweis", location, f"{story.story_id}: „damit …“ fehlt."))
+        api_match = re.search(r"\b(?:API|REST)\b", content, re.IGNORECASE)
+        if api_match:
+            term = api_match.group()
+            line = _line_of(story.text, term, story.line)
+            findings.append(Finding("Hinweis", f"stories/Kartenverwaltung_User_Stories.md:{line}", f"{story.story_id}: Technischer Begriff „{term}“."))
+        for term, pattern in forbidden_terms:
+            match = pattern.search(content)
+            if match:
+                line = _line_of(story.text, match.group(), story.line)
+                findings.append(Finding("Hinweis", f"stories/Kartenverwaltung_User_Stories.md:{line}", f"{story.story_id}: Glossar führt „{term}“ als nicht zu verwenden auf."))
+
+    if prototype_text is not None:
+        for match in re.finditer(r"\[(US-\d+)\s+(AK\d+)\]", prototype_text):
+            story_id, criterion_id = match.groups()
+            if criterion_id not in allowed_criteria.get(story_id, set()):
+                line = prototype_text.count("\n", 0, match.start()) + 1
+                findings.append(Finding("Alarm", f"prototyp/kartenverwaltung.html:{line}", f"Prototyp verweist auf nicht vorhandenes Kriterium [{story_id} {criterion_id}]."))
+
+    return findings
+
+
+def render_report(findings: list[Finding]) -> str:
+    rows = ["## Prüfung der User Stories", "", "| Typ | Fundstelle | Hinweis |", "|---|---|---|"]
+    if findings:
+        for finding in findings:
+            message = finding.message.replace("|", r"\|").replace("\n", " ")
+            rows.append(f"| {finding.level} | {finding.location} | {message} |")
+    else:
+        rows.append("| — | — | Keine Befunde. |")
+    return "\n".join(rows) + "\n"
+
+
+def main() -> int:
+    findings: list[Finding] = []
+    required_files = (STORIES_PATH, GLOSSARY_PATH)
+    if not all(path.is_file() for path in required_files):
+        missing = [str(path.relative_to(ROOT)) for path in required_files if not path.is_file()]
+        findings.append(Finding("Alarm", ", ".join(missing), "Pflichtdatei fehlt."))
+    else:
+        stories_text = STORIES_PATH.read_text(encoding="utf-8")
+        glossary_text = GLOSSARY_PATH.read_text(encoding="utf-8")
+        prototype_text = (
+            PROTOTYPE_PATH.read_text(encoding="utf-8")
+            if PROTOTYPE_PATH.is_file()
+            else None
+        )
+        findings.extend(check_content(stories_text, glossary_text, prototype_text))
+
+    report = render_report(findings)
+    print(report, end="")
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary_path:
+        with open(summary_path, "a", encoding="utf-8") as summary:
+            summary.write(report)
+            summary.write("\n")
+    return 1 if any(finding.level == "Alarm" for finding in findings) else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

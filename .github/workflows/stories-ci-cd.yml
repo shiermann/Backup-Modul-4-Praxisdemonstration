@@ -1,0 +1,49 @@
+name: User Stories prüfen und Prototyp veröffentlichen
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  pruefen-und-bauen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: User Stories prüfen
+        run: python3 .github/scripts/stories_check.py
+
+      - name: GitHub Pages konfigurieren
+        uses: actions/configure-pages@v5
+
+      - name: Veröffentlichungsdateien vorbereiten
+        run: |
+          mkdir -p _site
+          cp prototyp/kartenverwaltung.html _site/index.html
+
+      - name: Veröffentlichungsdateien hochladen
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  veroeffentlichen:
+    needs: pruefen-und-bauen
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Auf GitHub Pages veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4
