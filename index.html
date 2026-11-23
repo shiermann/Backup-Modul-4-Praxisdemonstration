@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kartenverwaltung</title>
+</head>
+<body>
+  <header>
+    <h1>Kartenverwaltung <span class="criterion">[US-211 AK1]</span></h1>
+    <p>Alle Debitkarten <span class="criterion">[US-211 AK1]</span></p>
+  </header>
+
+  <main>
+    <section aria-labelledby="overview-title">
+      <h2 id="overview-title">Kartenübersicht <span class="criterion">[US-211 AK1]</span></h2>
+      <div id="cards">
+        <article data-card="karte1">
+          <h3>Debitkarte 1 <span class="criterion">[US-211 AK1]</span></h3>
+          <p>Kartennummer: <span>•••• •••• •••• [Platzhalter: letzte 4 Stellen]</span> <span class="criterion">[US-211 AK2]</span></p>
+          <p>Status: <strong id="status-karte1">aktiv</strong> <span class="criterion">[US-211 AK3] [US-214 AK6] [US-218 AK2]</span></p>
+          <p id="online-status-karte1">Testzustand: Online-Zahlungen deaktiviert <span class="criterion">[US-216 AK1] [US-216 AK3]</span></p>
+          <label>
+            <input id="online-karte1" type="checkbox">
+            Online-Zahlungen aktivieren <span class="criterion">[US-216 AK3]</span>
+          </label>
+          <button type="button" data-lock="karte1">Vorübergehend sperren <span class="criterion">[US-214 AK4]</span></button>
+          <button type="button" data-unlock="karte1" disabled>Entsperren <span class="criterion">[US-214 AK5]</span></button>
+          <div id="unlock-panel-karte1" hidden>
+            <label for="unlock-method-karte1">Bestätigung <span class="criterion">[US-214 AK5]</span></label>
+            <select id="unlock-method-karte1">
+              <option value="">Methode auswählen [US-214 AK5]</option>
+              <option value="Biometrie">Biometrie [US-214 AK5]</option>
+              <option value="App-PIN">App-PIN [US-214 AK5]</option>
+            </select>
+            <button type="button" data-confirm-unlock="karte1">Entsperren bestätigen <span class="criterion">[US-214 AK5]</span></button>
+          </div>
+          <p id="push-karte1" role="status" aria-live="polite"><span class="criterion">[US-214 AK7]</span></p>
+          <button type="button" data-permanent="karte1">Endgültig sperren <span class="criterion">[US-218 AK1]</span></button>
+        </article>
+
+        <article data-card="karte2">
+          <h3>Debitkarte 2 <span class="criterion">[US-211 AK1]</span></h3>
+          <p>Kartennummer: <span>•••• •••• •••• [Platzhalter: letzte 4 Stellen]</span> <span class="criterion">[US-211 AK2]</span></p>
+          <p>Status: <strong id="status-karte2">aktiv</strong> <span class="criterion">[US-211 AK3] [US-214 AK6] [US-218 AK2]</span></p>
+          <p id="online-status-karte2">Testzustand: Online-Zahlungen deaktiviert <span class="criterion">[US-216 AK1] [US-216 AK3]</span></p>
+          <label>
+            <input id="online-karte2" type="checkbox">
+            Online-Zahlungen aktivieren <span class="criterion">[US-216 AK3]</span>
+          </label>
+          <button type="button" data-lock="karte2">Vorübergehend sperren <span class="criterion">[US-214 AK4]</span></button>
+          <button type="button" data-unlock="karte2" disabled>Entsperren <span class="criterion">[US-214 AK5]</span></button>
+          <div id="unlock-panel-karte2" hidden>
+            <label for="unlock-method-karte2">Bestätigung <span class="criterion">[US-214 AK5]</span></label>
+            <select id="unlock-method-karte2">
+              <option value="">Methode auswählen [US-214 AK5]</option>
+              <option value="Biometrie">Biometrie [US-214 AK5]</option>
+              <option value="App-PIN">App-PIN [US-214 AK5]</option>
+            </select>
+            <button type="button" data-confirm-unlock="karte2">Entsperren bestätigen <span class="criterion">[US-214 AK5]</span></button>
+          </div>
+          <p id="push-karte2" role="status" aria-live="polite"><span class="criterion">[US-214 AK7]</span></p>
+          <button type="button" data-permanent="karte2">Endgültig sperren <span class="criterion">[US-218 AK1]</span></button>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="online-title">
+      <h2 id="online-title">Online-Zahlungen pro Karte <span class="criterion">[US-216 AK1] [US-216 AK3]</span></h2>
+      <label for="online-payment-card">Karte für die Online-Zahlung <span class="criterion">[US-216 AK1]</span></label>
+      <select id="online-payment-card">
+        <option value="karte1">Debitkarte 1 [US-216 AK1]</option>
+        <option value="karte2">Debitkarte 2 [US-216 AK1]</option>
+      </select>
+      <button id="online-payment" type="button">Online-Zahlung simulieren (Testhilfe) <span class="criterion">[US-216 AK1]</span></button>
+      <p id="online-payment-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-216 AK1]</span></p>
+    </section>
+
+    <section aria-labelledby="transfer-limit-title">
+      <h2 id="transfer-limit-title">Tageslimit für Überweisungen <span class="criterion">[US-213 AK1] [US-213 AK2] [US-213 AK3] [US-213 AK4]</span></h2>
+      <label for="transfer-change">Änderung <span class="criterion">[US-213 AK1] [US-213 AK2]</span></label>
+      <select id="transfer-change">
+        <option value="decrease">Senkung [US-213 AK1]</option>
+        <option value="increase">Erhöhung [US-213 AK2]</option>
+      </select>
+      <label for="transfer-amount">Neues Tageslimit in EUR <span class="criterion">[US-213 AK1] [US-213 AK2] [US-213 AK3]</span></label>
+      <input id="transfer-amount" type="number" min="0" step="0.01">
+      <button id="transfer-submit" type="button">Änderung fortsetzen <span class="criterion">[US-213 AK1] [US-213 AK2] [US-213 AK3] [US-213 AK4]</span></button>
+      <div id="transfer-confirmation" hidden>
+        <label for="transfer-method">Erhöhung bestätigen mit <span class="criterion">[US-213 AK2]</span></label>
+        <select id="transfer-method">
+          <option value="">Methode auswählen [US-213 AK2]</option>
+          <option value="Fingerabdruck">Fingerabdruck [US-213 AK2]</option>
+          <option value="App-PIN">App-PIN [US-213 AK2]</option>
+        </select>
+        <button id="transfer-confirm" type="button">Bestätigen <span class="criterion">[US-213 AK2]</span></button>
+      </div>
+      <p id="transfer-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-213 AK1] [US-213 AK2] [US-213 AK3] [US-213 AK4]</span></p>
+    </section>
+
+    <section aria-labelledby="card-limit-title">
+      <h2 id="card-limit-title">Tageslimit der Debitkarte <span class="criterion">[US-215 AK1] [US-215 AK2] [US-215 AK3]</span></h2>
+      <label for="card-limit-change">Änderung <span class="criterion">[US-215 AK1] [US-215 AK2]</span></label>
+      <select id="card-limit-change">
+        <option value="decrease">Senkung [US-215 AK2]</option>
+        <option value="increase">Erhöhung [US-215 AK1]</option>
+      </select>
+      <label for="card-limit-amount">Neues Tageslimit in EUR <span class="criterion">[US-215 AK2] [US-215 AK3]</span></label>
+      <input id="card-limit-amount" type="number" min="0" step="0.01">
+      <button id="card-limit-submit" type="button">Änderung fortsetzen <span class="criterion">[US-215 AK1] [US-215 AK2] [US-215 AK3]</span></button>
+      <button id="card-limit-confirm" type="button" hidden>Mit Fingerabdruck bestätigen <span class="criterion">[US-215 AK1]</span></button>
+      <p id="card-limit-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-215 AK1] [US-215 AK2] [US-215 AK3]</span></p>
+    </section>
+
+    <section aria-labelledby="payment-title">
+      <h2 id="payment-title">Zahlungssimulation <span class="criterion">[US-214 AK2] [US-214 AK3] [US-216 AK1] [US-216 AK2]</span></h2>
+      <p>Testhilfe: Zahlungen und Fälligkeiten simulieren. <span class="criterion">[US-214 AK2] [US-214 AK3]</span></p>
+      <p>Eine vorübergehend gesperrte Karte lässt andere Karten nutzbar. <span class="criterion">[US-214 AK1]</span></p>
+      <label for="payment-card">Debitkarte <span class="criterion">[US-214 AK1] [US-214 AK2] [US-214 AK3]</span></label>
+      <select id="payment-card">
+        <option value="karte1">Debitkarte 1 [US-214 AK2] [US-214 AK3]</option>
+        <option value="karte2">Debitkarte 2 [US-214 AK2] [US-214 AK3]</option>
+      </select>
+      <button id="cash-payment" type="button">Zahlung an der Kasse simulieren (Testhilfe) <span class="criterion">[US-214 AK2] [US-216 AK2]</span></button>
+      <button id="online-payment-locked" type="button">Online-Zahlung bei vorübergehend gesperrter Karte simulieren (Testhilfe) <span class="criterion">[US-214 AK2]</span></button>
+      <button id="direct-debit" type="button">Lastschrift oder Dauerauftrag fällig stellen (Testhilfe) <span class="criterion">[US-214 AK3]</span></button>
+      <p id="payment-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-214 AK2] [US-214 AK3] [US-216 AK1] [US-216 AK2]</span></p>
+    </section>
+
+    <section aria-labelledby="duration-title">
+      <h2 id="duration-title">Sperrdauer simulieren <span class="criterion">[US-214 AK8] [US-218 AK3]</span></h2>
+      <p>Testhilfe: Die Zeit wird nicht abgewartet, sondern direkt simuliert. <span class="criterion">[US-214 AK8] [US-218 AK3]</span></p>
+      <label for="duration-card">Debitkarte <span class="criterion">[US-214 AK8] [US-218 AK3]</span></label>
+      <select id="duration-card">
+        <option value="karte1">Debitkarte 1 [US-214 AK8] [US-218 AK3]</option>
+        <option value="karte2">Debitkarte 2 [US-214 AK8] [US-218 AK3]</option>
+      </select>
+      <button id="simulate-14-days" type="button">14 Tage simulieren (Testhilfe) <span class="criterion">[US-214 AK8]</span></button>
+      <button id="simulate-30-days" type="button">30 Tage simulieren (Testhilfe) <span class="criterion">[US-218 AK3]</span></button>
+      <p id="duration-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-214 AK8] [US-218 AK3]</span></p>
+    </section>
+
+    <section aria-labelledby="push-title">
+      <h2 id="push-title">Push-Nachrichten <span class="criterion">[US-217 AK1] [US-217 AK2]</span></h2>
+      <p>Testzustand: Push-Nachrichten eingeschaltet <span class="criterion">[US-217 AK1]</span></p>
+      <label>
+        <input id="push-disabled" type="checkbox">
+        Push-Nachrichten ausschalten <span class="criterion">[US-217 AK2]</span>
+      </label>
+      <label for="payment-amount">Betrag in EUR <span class="criterion">[US-217 AK1]</span></label>
+      <input id="payment-amount" type="number" min="0" step="0.01">
+      <label for="merchant">Händler <span class="criterion">[US-217 AK1]</span></label>
+      <input id="merchant" type="text">
+      <button id="simulate-push-payment" type="button">Kartenzahlung simulieren (Testhilfe) <span class="criterion">[US-217 AK1]</span></button>
+      <p id="push-notification" class="status" role="status" aria-live="polite"><span class="criterion">[US-217 AK1] [US-217 AK2]</span></p>
+    </section>
+
+    <section aria-labelledby="permanent-lock-title">
+      <h2 id="permanent-lock-title">Endgültig sperren <span class="criterion">[US-218 AK1] [US-218 AK2] [US-218 AK3]</span></h2>
+      <label for="permanent-card">Debitkarte <span class="criterion">[US-218 AK1]</span></label>
+      <select id="permanent-card">
+        <option value="karte1">Debitkarte 1 [US-218 AK1]</option>
+        <option value="karte2">Debitkarte 2 [US-218 AK1]</option>
+      </select>
+      <button id="start-permanent-lock" type="button">Endgültige Sperre beginnen <span class="criterion">[US-218 AK1]</span></button>
+      <div id="permanent-confirmation" hidden>
+        <label>
+          <input id="confirm-permanent-checkbox" type="checkbox">
+          Endgültige Sperre bestätigen <span class="criterion">[US-218 AK1]</span>
+        </label>
+        <button id="confirm-permanent-lock" type="button">Bestätigen <span class="criterion">[US-218 AK1]</span></button>
+      </div>
+      <p id="permanent-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-218 AK1] [US-218 AK2]</span></p>
+    </section>
+
+    <section aria-labelledby="pin-title">
+      <h2 id="pin-title">PIN anzeigen <span class="criterion">[US-219 AK1] [US-219 AK2]</span></h2>
+      <button id="show-pin" type="button">PIN anzeigen <span class="criterion">[US-219 AK1]</span></button>
+      <p id="pin-display" aria-live="polite">PIN ausgeblendet <span class="criterion">[US-219 AK2]</span></p>
+    </section>
+
+    <section aria-labelledby="replacement-title">
+      <h2 id="replacement-title">Ersatzkarte bestellen <span class="criterion">[US-220 AK1] [US-220 AK2]</span></h2>
+      <p>Versand an: [Platzhalter: hinterlegte Adresse] <span class="criterion">[US-220 AK2]</span></p>
+      <button id="order-card" type="button">Ersatzkarte bestellen <span class="criterion">[US-220 AK1]</span></button>
+      <p id="order-status" class="status" role="status" aria-live="polite"><span class="criterion">[US-220 AK1] [US-220 AK2]</span></p>
+    </section>
+  </main>
+
+  <footer>[US-211 AK1] Prototyp · Version 1.0.0</footer>
+
+  <script>
+    const cards = {
+      karte1: { temporarilyLocked: false, permanentlyLocked: false },
+      karte2: { temporarilyLocked: false, permanentlyLocked: false }
+    };
+
+    const byId = (id) => document.getElementById(id);
+    const announceLockChange = (cardId, message) => {
+      byId(`push-${cardId}`).textContent = `${message} [US-214 AK7]`;
+    };
+
+    const renderCard = (cardId) => {
+      const card = cards[cardId];
+      byId(`status-${cardId}`).textContent = card.permanentlyLocked
+        ? "endgültig gesperrt"
+        : card.temporarilyLocked
+          ? "vorübergehend gesperrt"
+          : "aktiv";
+      document.querySelector(`[data-lock="${cardId}"]`).disabled =
+        card.temporarilyLocked || card.permanentlyLocked;
+      document.querySelector(`[data-unlock="${cardId}"]`).disabled =
+        !card.temporarilyLocked || card.permanentlyLocked;
+      document.querySelector(`[data-permanent="${cardId}"]`).disabled =
+        card.permanentlyLocked;
+    };
+
+    document.querySelectorAll("[data-lock]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const cardId = button.dataset.lock;
+        if (cards[cardId].permanentlyLocked) return;
+        cards[cardId].temporarilyLocked = true;
+        renderCard(cardId);
+        announceLockChange(cardId, "Push-Nachricht: Karte vorübergehend gesperrt.");
+      });
+    });
+
+    document.querySelectorAll("[data-unlock]").forEach((button) => {
+      button.addEventListener("click", () => {
+        byId(`unlock-panel-${button.dataset.unlock}`).hidden = false;
+      });
+    });
+
+    document.querySelectorAll("[data-confirm-unlock]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const cardId = button.dataset.confirmUnlock;
+        const method = byId(`unlock-method-${cardId}`).value;
+        if (!method || !cards[cardId].temporarilyLocked || cards[cardId].permanentlyLocked) return;
+        cards[cardId].temporarilyLocked = false;
+        byId(`unlock-panel-${cardId}`).hidden = true;
+        byId(`unlock-method-${cardId}`).value = "";
+        renderCard(cardId);
+        announceLockChange(cardId, `Push-Nachricht: Karte entsperrt; Bestätigung per ${method}.`);
+      });
+    });
+
+    document.querySelectorAll("[data-permanent]").forEach((button) => {
+      button.addEventListener("click", () => {
+        byId("permanent-card").value = button.dataset.permanent;
+        byId("permanent-confirmation").hidden = false;
+        byId("confirm-permanent-checkbox").checked = false;
+        byId("permanent-status").textContent = "";
+      });
+    });
+
+    byId("start-permanent-lock").addEventListener("click", () => {
+      byId("permanent-confirmation").hidden = false;
+      byId("confirm-permanent-checkbox").checked = false;
+      byId("permanent-status").textContent = "";
+    });
+
+    byId("confirm-permanent-lock").addEventListener("click", () => {
+      const cardId = byId("permanent-card").value;
+      if (!byId("confirm-permanent-checkbox").checked || cards[cardId].permanentlyLocked) return;
+      cards[cardId].temporarilyLocked = false;
+      cards[cardId].permanentlyLocked = true;
+      byId("permanent-confirmation").hidden = true;
+      renderCard(cardId);
+      byId("permanent-status").textContent =
+        "Endgültige Sperre gesetzt; sie kann nicht rückgängig gemacht werden. [US-218 AK2]";
+    });
+
+    document.querySelectorAll("[id^='online-'][type='checkbox']").forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        const cardId = checkbox.id.replace("online-", "");
+        byId(`online-status-${cardId}`).textContent =
+          `Online-Zahlungen: ${checkbox.checked ? "aktiviert" : "deaktiviert"} [US-216 AK3]`;
+      });
+    });
+
+    const selectedPaymentCard = () => byId("payment-card").value;
+    const showPaymentResult = (kind, cardId = selectedPaymentCard(), statusId = "payment-status") => {
+      const card = cards[cardId];
+      if (card.permanentlyLocked) {
+        byId(statusId).textContent = "[US-214 AK2] [US-216 AK1]";
+      } else if (card.temporarilyLocked && kind !== "direct-debit") {
+        byId(statusId).textContent = "Zahlung abgelehnt. [US-214 AK2]";
+      } else if (kind === "direct-debit") {
+        byId(statusId).textContent = "Lastschrift oder Dauerauftrag wird ausgeführt. [US-214 AK3]";
+      } else if (kind === "cash") {
+        byId(statusId).textContent =
+          "Die Online-Einstellung betrifft Zahlungen an der Kasse nicht. [US-216 AK2]";
+      } else {
+        const onlineEnabled = byId(`online-${cardId}`).checked;
+        if (kind === "online" && !onlineEnabled) {
+          byId(statusId).textContent = "Online-Zahlung abgelehnt. [US-216 AK1]";
+        } else {
+          byId(statusId).textContent = "Online-Zahlung nicht durch die deaktivierte Einstellung abgelehnt. [US-216 AK1]";
+        }
+      }
+    };
+
+    byId("cash-payment").addEventListener("click", () => showPaymentResult("cash"));
+    byId("online-payment").addEventListener("click", () => {
+      showPaymentResult("online", byId("online-payment-card").value, "online-payment-status");
+    });
+    byId("online-payment-locked").addEventListener("click", () => {
+      showPaymentResult("online", selectedPaymentCard());
+    });
+    byId("direct-debit").addEventListener("click", () => showPaymentResult("direct-debit"));
+
+    byId("transfer-submit").addEventListener("click", () => {
+      const amount = Number(byId("transfer-amount").value);
+      if (!Number.isFinite(amount) || amount < 0 || byId("transfer-amount").value === "") {
+        byId("transfer-status").textContent = "Bitte ein neues Tageslimit eingeben. [US-213 AK1]";
+        return;
+      }
+      if (byId("transfer-change").value === "decrease") {
+        byId("transfer-confirmation").hidden = true;
+        byId("transfer-status").textContent = "Das neue Tageslimit gilt sofort. [US-213 AK1]";
+        return;
+      }
+      if (amount > 10000) {
+        byId("transfer-confirmation").hidden = true;
+        byId("transfer-status").textContent =
+          "Die Erhöhung wird nicht in der App durchgeführt; der Kundenservice ruft zurück. [US-213 AK3]";
+        return;
+      }
+      byId("transfer-confirmation").hidden = false;
+      byId("transfer-status").textContent = "Schritt 2 von höchstens 3: Bestätigung auswählen. [US-213 AK4]";
+    });
+
+    byId("transfer-confirm").addEventListener("click", () => {
+      const method = byId("transfer-method").value;
+      if (!method) {
+        byId("transfer-status").textContent = "Fingerabdruck oder App-PIN auswählen. [US-213 AK2]";
+        return;
+      }
+      const amount = Number(byId("transfer-amount").value);
+      if (byId("transfer-change").value !== "increase" || !Number.isFinite(amount) ||
+          byId("transfer-amount").value === "" || amount < 0 || amount > 10000) {
+        byId("transfer-confirmation").hidden = true;
+        byId("transfer-status").textContent =
+          amount > 10000
+            ? "Die Erhöhung wird nicht in der App durchgeführt; der Kundenservice ruft zurück. [US-213 AK3]"
+            : "Änderung erneut fortsetzen. [US-213 AK4]";
+        return;
+      }
+      byId("transfer-confirmation").hidden = true;
+      byId("transfer-status").textContent =
+        `Tageslimit erhöht; Bestätigung per ${method}. Es gilt sofort. [US-213 AK2]`;
+    });
+
+    byId("card-limit-submit").addEventListener("click", () => {
+      const amountField = byId("card-limit-amount");
+      const amount = Number(amountField.value);
+      if (!Number.isFinite(amount) || amount < 0 || amountField.value === "") {
+        byId("card-limit-status").textContent = "Bitte ein neues Tageslimit eingeben. [US-215 AK3]";
+        return;
+      }
+      if (byId("card-limit-change").value === "decrease") {
+        byId("card-limit-confirm").hidden = true;
+        byId("card-limit-status").textContent = "Die Senkung gilt sofort. [US-215 AK2]";
+        return;
+      }
+      if (amount > 5000) {
+        byId("card-limit-confirm").hidden = true;
+        byId("card-limit-status").textContent = "Eine Erhöhung ist höchstens bis 5.000 EUR möglich. [US-215 AK3]";
+        return;
+      }
+      byId("card-limit-confirm").hidden = false;
+      byId("card-limit-status").textContent = "Erhöhung per Fingerabdruck bestätigen. [US-215 AK1]";
+    });
+
+    byId("card-limit-confirm").addEventListener("click", () => {
+      const amount = Number(byId("card-limit-amount").value);
+      if (byId("card-limit-change").value !== "increase" || !Number.isFinite(amount) ||
+          byId("card-limit-amount").value === "" || amount < 0 || amount > 5000) {
+        byId("card-limit-confirm").hidden = true;
+        byId("card-limit-status").textContent =
+          "Änderung erneut fortsetzen; eine Erhöhung ist höchstens bis 5.000 EUR möglich. [US-215 AK3]";
+        return;
+      }
+      byId("card-limit-confirm").hidden = true;
+      byId("card-limit-status").textContent =
+        "Erhöhung per Fingerabdruck bestätigt. [US-215 AK1]";
+    });
+
+    byId("simulate-14-days").addEventListener("click", () => {
+      const cardId = byId("duration-card").value;
+      if (cards[cardId].temporarilyLocked && !cards[cardId].permanentlyLocked) {
+        byId("duration-status").textContent =
+          "Erinnerung nach 14 Tagen; die Karte bleibt gesperrt. [US-214 AK8]";
+      } else {
+        byId("duration-status").textContent = "Für die Erinnerung muss die Karte vorübergehend gesperrt sein. [US-214 AK8]";
+      }
+    });
+
+    byId("simulate-30-days").addEventListener("click", () => {
+      const cardId = byId("duration-card").value;
+      if (cards[cardId].temporarilyLocked && !cards[cardId].permanentlyLocked) {
+        cards[cardId].temporarilyLocked = false;
+        cards[cardId].permanentlyLocked = true;
+        renderCard(cardId);
+        byId("duration-status").textContent =
+          "Nach 30 Tagen endgültig gesperrt. [US-218 AK3]";
+      } else {
+        byId("duration-status").textContent = "Für die automatische endgültige Sperre muss die Karte vorübergehend gesperrt sein. [US-218 AK3]";
+      }
+    });
+
+    byId("simulate-push-payment").addEventListener("click", () => {
+      const amount = byId("payment-amount").value.trim();
+      const merchant = byId("merchant").value.trim();
+      if (!amount || !merchant) {
+        byId("push-notification").textContent = "Betrag und Händler eingeben. [US-217 AK1]";
+        return;
+      }
+      byId("push-notification").textContent = byId("push-disabled").checked
+        ? "Push-Nachrichten sind ausgeschaltet. [US-217 AK2]"
+        : `Push-Nachricht: Zahlung über ${amount} EUR bei ${merchant}. [US-217 AK1]`;
+    });
+
+    let pinHideTimer;
+    byId("show-pin").addEventListener("click", () => {
+      const display = byId("pin-display");
+      display.textContent = "PIN-Platzhalter sichtbar (10 Sekunden). [US-219 AK1]";
+      window.clearTimeout(pinHideTimer);
+      pinHideTimer = window.setTimeout(() => {
+        display.textContent = "PIN ausgeblendet. [US-219 AK2]";
+      }, 10000);
+    });
+
+    byId("order-card").addEventListener("click", () => {
+      byId("order-status").textContent =
+        "Prototyp-Simulation: Übermittlung per REST-API an den Kartenprozessor; Versand an [hinterlegte Adresse]. [US-220 AK1] [US-220 AK2]";
+    });
+  </script>
+</body>
+</html>

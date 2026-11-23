@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 STORIES_PATH = ROOT / "stories" / "Kartenverwaltung_User_Stories.md"
 GLOSSARY_PATH = ROOT / "quellen" / "Glossar.md"
-PROTOTYPE_PATH = ROOT / "prototyp" / "kartenverwaltung.html"
+PROTOTYPE_PATH = ROOT / "index.html"
 
 
 @dataclass(frozen=True)
@@ -154,7 +154,7 @@ def check_content(
             story_id, criterion_id = match.groups()
             if criterion_id not in allowed_criteria.get(story_id, set()):
                 line = prototype_text.count("\n", 0, match.start()) + 1
-                findings.append(Finding("Alarm", f"prototyp/kartenverwaltung.html:{line}", f"Prototyp verweist auf nicht vorhandenes Kriterium [{story_id} {criterion_id}]."))
+                findings.append(Finding("Alarm", f"index.html:{line}", f"Prototyp verweist auf nicht vorhandenes Kriterium [{story_id} {criterion_id}]."))
 
     return findings
 

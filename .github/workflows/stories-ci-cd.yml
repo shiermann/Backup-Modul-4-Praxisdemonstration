@@ -26,7 +26,7 @@ jobs:
       - name: Veröffentlichungsdateien vorbereiten
         run: |
           mkdir -p _site
-          cp prototyp/kartenverwaltung.html _site/index.html
+          cp index.html _site/index.html
 
       - name: Veröffentlichungsdateien hochladen
         uses: actions/upload-pages-artifact@v4
