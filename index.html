@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kartenverwaltung – Kundentest</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, sans-serif;
+      color: #000;
+      background: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      max-width: 58rem;
+      margin: 0 auto;
+      padding: 1rem;
+      line-height: 1.5;
+    }
+
+    header,
+    nav,
+    section,
+    article,
+    fieldset {
+      border: 1px solid #666;
+      padding: 1rem;
+      margin-block: 1rem;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    a,
+    button,
+    input,
+    select {
+      color: #000;
+      background: #fff;
+      font: inherit;
+    }
+
+    a,
+    button {
+      border: 1px solid #000;
+      padding: 0.4rem 0.7rem;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    input,
+    select {
+      border: 1px solid #666;
+      max-width: 100%;
+      padding: 0.35rem;
+    }
+
+    label {
+      display: block;
+      margin-block: 0.75rem 0.25rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-block: 0.75rem;
+    }
+
+    .criteria {
+      display: inline-block;
+      margin-inline-start: 0.25rem;
+      font-size: 0.85em;
+      font-weight: 600;
+      white-space: normal;
+    }
+
+    .card-list {
+      padding: 0;
+      list-style: none;
+    }
+
+    .card-list article {
+      margin-block: 0.75rem;
+    }
+
+    .notice,
+    output {
+      display: block;
+      margin-block: 0.75rem;
+    }
+
+    :focus-visible {
+      outline: 2px solid #000;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kartenverwaltung <span class="criteria">[US-211 AK1]</span></h1>
+    <p class="notice">
+      Kundentest-Prototyp. Kartendaten und PIN sind Platzhalter; es werden keine echten
+      Kartennummern oder PINs angezeigt.
+      <span class="criteria">[US-211 AK2] [US-219 AK1]</span>
+    </p>
+  </header>
+
+  <nav aria-label="Bereiche">
+    <a href="#cards">Karten <span class="criteria">[US-211 AK1]</span></a>
+    <a href="#temporary-lock">Vorübergehend sperren <span class="criteria">[US-214 AK4]</span></a>
+    <a href="#transfer-limit">Tageslimit ändern <span class="criteria">[US-213 AK1]</span></a>
+    <a href="#card-limit">Kartenlimit ändern <span class="criteria">[US-215 AK1]</span></a>
+    <a href="#online-payments">Online-Zahlungen <span class="criteria">[US-216 AK3]</span></a>
+    <a href="#payment-notifications">Push-Nachrichten <span class="criteria">[US-217 AK2]</span></a>
+    <a href="#permanent-lock">Endgültig sperren <span class="criteria">[US-218 AK1]</span></a>
+    <a href="#pin-display">PIN anzeigen <span class="criteria">[US-219 AK1]</span></a>
+    <a href="#replacement-card">Ersatzkarte <span class="criteria">[US-220 AK1]</span></a>
+  </nav>
+
+  <main>
+    <section id="cards" aria-labelledby="cards-heading">
+      <h2 id="cards-heading">Kartenübersicht</h2>
+      <p>
+        Die Debitkarten sind Platzhalter. Angezeigt werden nur maskierte Kartennummern
+        mit einem Platzhalter für die letzten vier Ziffern.
+        <span class="criteria">[US-211 AK1] [US-211 AK2]</span>
+      </p>
+      <ul id="card-list" class="card-list" aria-live="polite"></ul>
+    </section>
+
+    <section id="temporary-lock" aria-labelledby="temporary-lock-heading">
+      <h2 id="temporary-lock-heading">
+        Karte vorübergehend sperren und entsperren
+        <span class="criteria">[US-214 AK1] [US-214 AK4] [US-214 AK5]</span>
+      </h2>
+      <label for="lock-card">
+        Debitkarte auswählen <span class="criteria">[US-214 AK1]</span>
+      </label>
+      <select id="lock-card" aria-label="Debitkarte für Sperraktionen">
+        <option value="debit-a">Debitkarte A (Platzhalter)</option>
+        <option value="debit-b">Debitkarte B (Platzhalter)</option>
+      </select>
+      <p id="lock-status" aria-live="polite"></p>
+      <div class="controls">
+        <button id="temporary-lock-button" type="button">
+          Vorübergehend sperren <span class="criteria">[US-214 AK4] [US-214 AK7]</span>
+        </button>
+        <button id="unlock-biometric-button" type="button">
+          Mit Biometrie entsperren <span class="criteria">[US-214 AK5] [US-214 AK7]</span>
+        </button>
+        <button id="unlock-pin-button" type="button">
+          Mit App-PIN entsperren <span class="criteria">[US-214 AK5] [US-214 AK7]</span>
+        </button>
+      </div>
+      <p id="card-state-push" aria-live="polite">
+        Statusänderungs-Push-Nachricht erscheint hier.
+        <span class="criteria">[US-214 AK7]</span>
+      </p>
+
+      <fieldset>
+        <legend>
+          Fällige Zahlungen bei gesperrter Karte
+          <span class="criteria">[US-214 AK3]</span>
+        </legend>
+        <div class="controls">
+          <button id="simulate-direct-debit" type="button">
+            <span>Testhilfe:</span> Lastschrift simulieren
+            <span class="criteria">[US-214 AK3]</span>
+          </button>
+          <button id="simulate-standing-order" type="button">
+            <span>Testhilfe:</span> Dauerauftrag simulieren
+            <span class="criteria">[US-214 AK3]</span>
+          </button>
+        </div>
+        <output id="scheduled-payment-result" aria-live="polite">
+          <span class="criteria">[US-214 AK3]</span>
+        </output>
+      </fieldset>
+
+      <fieldset>
+        <legend>
+          Sperrdauer <span class="criteria">[US-214 AK8] [US-218 AK3]</span>
+        </legend>
+        <p id="lock-duration-status">
+          <span class="criteria">[US-214 AK8] [US-218 AK3]</span>
+        </p>
+        <div class="controls">
+          <button id="simulate-14-days" type="button">
+            <span>Testhilfe:</span> 14 Tage simulieren
+            <span class="criteria">[US-214 AK8]</span>
+          </button>
+          <button id="simulate-30-days" type="button">
+            <span>Testhilfe:</span> 30 Tage simulieren
+            <span class="criteria">[US-214 AK8] [US-218 AK3]</span>
+          </button>
+        </div>
+      </fieldset>
+
+      <output id="lock-action-result" aria-live="polite">
+        <span class="criteria">[US-214 AK1] [US-214 AK4] [US-214 AK5]</span>
+      </output>
+    </section>
+
+    <section id="transfer-limit" aria-labelledby="transfer-limit-heading">
+      <h2 id="transfer-limit-heading">
+        Tageslimit für Überweisungen ändern
+        <span class="criteria">[US-213 AK1] [US-213 AK2] [US-213 AK3] [US-213 AK4]</span>
+      </h2>
+      <p>
+        Ablauf: Betrag eingeben, Bestätigungsmethode wählen, Änderung auslösen.
+        <span class="criteria">[US-213 AK4]</span>
+      </p>
+      <label for="transfer-limit-amount">
+        Neues Tageslimit in EUR <span class="criteria">[US-213 AK1] [US-213 AK2] [US-213 AK3]</span>
+      </label>
+      <input id="transfer-limit-amount" type="number" min="0" step="0.01" inputmode="decimal">
+      <label for="transfer-confirmation">
+        Bestätigung für Erhöhung
+        <span class="criteria">[US-213 AK2]</span>
+      </label>
+      <select id="transfer-confirmation">
+        <option value="Biometrie">Fingerabdruck</option>
+        <option value="App-PIN">App-PIN</option>
+      </select>
+      <div class="controls">
+        <button id="lower-transfer-limit" type="button">
+          Senkung sofort übernehmen
+          <span class="criteria">[US-213 AK1] [US-213 AK4]</span>
+        </button>
+        <button id="raise-transfer-limit" type="button">
+          Erhöhung bestätigen
+          <span class="criteria">[US-213 AK2] [US-213 AK3] [US-213 AK4]</span>
+        </button>
+      </div>
+      <output id="transfer-limit-result" aria-live="polite">
+        Noch keine Änderung simuliert. <span class="criteria">[US-213 AK1] [US-213 AK2]</span>
+      </output>
+    </section>
+
+    <section id="card-limit" aria-labelledby="card-limit-heading">
+      <h2 id="card-limit-heading">
+        Tageslimit der Debitkarte ändern
+        <span class="criteria">[US-215 AK1] [US-215 AK2] [US-215 AK3]</span>
+      </h2>
+      <label for="card-limit-amount">
+        Neues Kartenlimit in EUR <span class="criteria">[US-215 AK3]</span>
+      </label>
+      <input id="card-limit-amount" type="number" min="0" max="5000" step="0.01" inputmode="decimal">
+      <div class="controls">
+        <button id="lower-card-limit" type="button">
+          Senkung sofort übernehmen <span class="criteria">[US-215 AK2]</span>
+        </button>
+        <button id="raise-card-limit" type="button">
+          Erhöhung per Fingerabdruck bestätigen
+          <span class="criteria">[US-215 AK1] [US-215 AK3]</span>
+        </button>
+      </div>
+      <output id="card-limit-result" aria-live="polite">
+        Noch keine Änderung simuliert. <span class="criteria">[US-215 AK2] [US-215 AK3]</span>
+      </output>
+    </section>
+
+    <section id="online-payments" aria-labelledby="online-payments-heading">
+      <h2 id="online-payments-heading">
+        Online-Zahlungen ein- und ausschalten
+        <span class="criteria">[US-216 AK1] [US-216 AK2] [US-216 AK3]</span>
+      </h2>
+      <label for="payment-card">
+        Karte für Einstellung und Testhilfe
+        <span class="criteria">[US-216 AK1] [US-216 AK2] [US-216 AK3]</span>
+      </label>
+      <select id="payment-card">
+        <option value="debit-a">Debitkarte A (Platzhalter)</option>
+        <option value="debit-b">Debitkarte B (Platzhalter)</option>
+        <option value="credit-a">Kreditkarte (Platzhalter)</option>
+      </select>
+      <p id="online-setting-status" aria-live="polite">
+        <span class="criteria">[US-216 AK3]</span>
+      </p>
+      <button id="toggle-online-payments" type="button">
+        <span class="criteria">[US-216 AK1] [US-216 AK3]</span>
+      </button>
+
+      <fieldset>
+        <legend>
+          Kartenzahlung simulieren <span class="criteria">[US-214 AK2] [US-216 AK1] [US-216 AK2]</span>
+        </legend>
+        <label for="payment-amount">
+          Betrag in EUR <span class="criteria">[US-217 AK1]</span>
+        </label>
+        <input id="payment-amount" type="number" min="0" step="0.01" inputmode="decimal" required>
+        <label for="payment-merchant">
+          Händler <span class="criteria">[US-217 AK1]</span>
+        </label>
+        <input id="payment-merchant" type="text" required>
+        <div class="controls">
+          <button id="simulate-counter-payment" type="button">
+            <span>Testhilfe:</span> Zahlung an der Kasse
+            <span class="criteria">[US-214 AK2] [US-216 AK2] [US-217 AK1]</span>
+          </button>
+          <button id="simulate-online-payment" type="button">
+            <span>Testhilfe:</span> Online-Zahlung
+            <span class="criteria">[US-214 AK2] [US-216 AK1] [US-217 AK1]</span>
+          </button>
+        </div>
+        <output id="payment-result" aria-live="polite">
+          <span class="criteria">[US-214 AK2] [US-216 AK1] [US-216 AK2]</span>
+        </output>
+      </fieldset>
+    </section>
+
+    <section id="payment-notifications" aria-labelledby="payment-notifications-heading">
+      <h2 id="payment-notifications-heading">
+        Push-Nachrichten bei Kartenzahlung
+        <span class="criteria">[US-217 AK1] [US-217 AK2]</span>
+      </h2>
+      <label for="payment-push-toggle">
+        <input id="payment-push-toggle" type="checkbox" checked>
+        Push-Nachrichten bei Kartenzahlungen erhalten
+        <span class="criteria">[US-217 AK2]</span>
+      </label>
+      <p id="transaction-push-result" aria-live="polite">
+        Push-Nachricht erscheint hier. <span class="criteria">[US-217 AK1]</span>
+      </p>
+    </section>
+
+    <section id="permanent-lock" aria-labelledby="permanent-lock-heading">
+      <h2 id="permanent-lock-heading">
+        Karte endgültig sperren
+        <span class="criteria">[US-218 AK1] [US-218 AK2]</span>
+      </h2>
+      <button id="request-permanent-lock" type="button">
+        Endgültige Sperre anfordern
+        <span class="criteria">[US-218 AK1]</span>
+      </button>
+      <div id="permanent-lock-confirmation" hidden>
+        <p>
+          Die endgültige Sperre kann nicht rückgängig gemacht werden.
+          <span class="criteria">[US-218 AK2]</span>
+        </p>
+        <button id="confirm-permanent-lock" type="button">
+          Endgültige Sperre bestätigen
+          <span class="criteria">[US-218 AK1] [US-218 AK2]</span>
+        </button>
+        <button id="cancel-permanent-lock" type="button">
+          Abbrechen <span class="criteria">[US-218 AK1]</span>
+        </button>
+      </div>
+      <output id="permanent-lock-result" aria-live="polite">
+        <span class="criteria">[US-218 AK1] [US-218 AK2]</span>
+      </output>
+    </section>
+
+    <section id="pin-display" aria-labelledby="pin-display-heading">
+      <h2 id="pin-display-heading">
+        PIN anzeigen <span class="criteria">[US-219 AK1] [US-219 AK2]</span>
+      </h2>
+      <p id="pin-placeholder" aria-live="polite">
+        •••• <span class="criteria">[US-219 AK1]</span>
+      </p>
+      <button id="show-pin" type="button">
+        PIN-Platzhalter anzeigen <span class="criteria">[US-219 AK1] [US-219 AK2]</span>
+      </button>
+    </section>
+
+    <section id="replacement-card" aria-labelledby="replacement-card-heading">
+      <h2 id="replacement-card-heading">
+        Ersatzkarte bestellen <span class="criteria">[US-220 AK1] [US-220 AK2]</span>
+      </h2>
+      <p>
+        Die Bestellung wird im Prototyp simuliert; es wird keine echte REST-API aufgerufen.
+        <span class="criteria">[US-220 AK1]</span>
+      </p>
+      <button id="order-replacement-card" type="button" disabled>
+        Ersatzkarte bestellen (Simulation)
+        <span class="criteria">[US-220 AK1] [US-220 AK2]</span>
+      </button>
+      <output id="replacement-card-result" aria-live="polite">
+        <span class="criteria">[US-220 AK1] [US-220 AK2]</span>
+      </output>
+    </section>
+  </main>
+
+  <script>
+    const cards = [
+      {
+        id: "debit-a",
+        name: "Debitkarte A (Platzhalter)",
+        type: "Debitkarte",
+        status: "aktiv",
+        onlinePayments: true,
+        lockedDays: 0,
+        reminded: false
+      },
+      {
+        id: "debit-b",
+        name: "Debitkarte B (Platzhalter)",
+        type: "Debitkarte",
+        status: "aktiv",
+        onlinePayments: true,
+        lockedDays: 0,
+        reminded: false
+      },
+      {
+        id: "credit-a",
+        name: "Kreditkarte (Platzhalter)",
+        type: "Kreditkarte",
+        onlinePayments: true
+      }
+    ];
+
+    const byId = (id) => document.getElementById(id);
+    const lockCard = () => cards.find((card) => card.id === byId("lock-card").value);
+    const paymentCard = () => cards.find((card) => card.id === byId("payment-card").value);
+    let permanentLockPending = false;
+    let pinTimeout;
+
+    function showMessage(element, message, criteria) {
+      const badge = document.createElement("span");
+      badge.className = "criteria";
+      badge.textContent = criteria;
+      element.replaceChildren(document.createTextNode(message + " "), badge);
+    }
+
+    function renderCards() {
+      const list = byId("card-list");
+      list.replaceChildren();
+
+      for (const card of cards) {
+        const item = document.createElement("li");
+        const article = document.createElement("article");
+        const title = document.createElement("h3");
+        title.textContent = card.name;
+
+        const titleCriteria = document.createElement("span");
+        titleCriteria.className = "criteria";
+        titleCriteria.textContent = card.type === "Debitkarte"
+          ? "[US-211 AK1]"
+          : "[US-216 AK3]";
+        title.append(" ", titleCriteria);
+        article.append(title);
+
+        if (card.type === "Debitkarte") {
+          const number = document.createElement("p");
+          number.textContent = "Kartennummer: •••• •••• •••• [Platzhalter: letzte 4 Ziffern]";
+          const numberCriteria = document.createElement("span");
+          numberCriteria.className = "criteria";
+          numberCriteria.textContent = "[US-211 AK2]";
+          number.append(" ", numberCriteria);
+          article.append(number);
+
+          const status = document.createElement("p");
+          status.textContent = `Status: ${card.status}`;
+          const statusCriteria = document.createElement("span");
+          statusCriteria.className = "criteria";
+          statusCriteria.textContent = "[US-211 AK3] [US-214 AK6]";
+          status.append(" ", statusCriteria);
+          article.append(status);
+        }
+
+        const online = document.createElement("p");
+        online.textContent = `Online-Zahlungen: ${card.onlinePayments ? "eingeschaltet" : "ausgeschaltet"}`;
+        const onlineCriteria = document.createElement("span");
+        onlineCriteria.className = "criteria";
+        onlineCriteria.textContent = "[US-216 AK3]";
+        online.append(" ", onlineCriteria);
+        article.append(online);
+
+        item.append(article);
+        list.append(item);
+      }
+    }
+
+    function renderLockState() {
+      const card = lockCard();
+      byId("lock-status").textContent =
+        `${card.name}: Status ${card.status}. [US-214 AK1] [US-214 AK6]`;
+      byId("lock-duration-status").textContent = card.status === "vorübergehend gesperrt"
+        ? `Sperrdauer: ${card.lockedDays} Tage. [US-214 AK8] [US-218 AK3]`
+        : `Sperrdauer: keine laufende vorübergehende Sperre. [US-214 AK8] [US-218 AK3]`;
+      byId("temporary-lock-button").disabled = card.status !== "aktiv";
+      byId("unlock-biometric-button").disabled = card.status !== "vorübergehend gesperrt";
+      byId("unlock-pin-button").disabled = card.status !== "vorübergehend gesperrt";
+      byId("simulate-direct-debit").disabled = card.status === "aktiv";
+      byId("simulate-standing-order").disabled = card.status === "aktiv";
+      byId("simulate-14-days").disabled = card.status !== "vorübergehend gesperrt";
+      byId("simulate-30-days").disabled = card.status !== "vorübergehend gesperrt";
+      byId("request-permanent-lock").disabled = card.status === "endgültig gesperrt";
+      byId("permanent-lock-confirmation").hidden = !permanentLockPending;
+      byId("order-replacement-card").disabled = card.status !== "endgültig gesperrt";
+    }
+
+    function renderOnlineSetting() {
+      const card = paymentCard();
+      byId("online-setting-status").textContent =
+        `${card.name}: Online-Zahlungen ${card.onlinePayments ? "eingeschaltet" : "ausgeschaltet"}. [US-216 AK3]`;
+      byId("toggle-online-payments").textContent = card.onlinePayments
+        ? "Online-Zahlungen ausschalten [US-216 AK1] [US-216 AK3]"
+        : "Online-Zahlungen einschalten [US-216 AK1] [US-216 AK3]";
+      byId("toggle-online-payments").setAttribute("aria-pressed", String(card.onlinePayments));
+    }
+
+    function render() {
+      renderCards();
+      renderLockState();
+      renderOnlineSetting();
+    }
+
+    function showCardStatePush(message) {
+      showMessage(byId("card-state-push"), message, "[US-214 AK7]");
+    }
+
+    function setTemporaryLock() {
+      const card = lockCard();
+      if (card.status !== "aktiv") return;
+      card.status = "vorübergehend gesperrt";
+      card.lockedDays = 0;
+      card.reminded = false;
+      showCardStatePush(`Push-Nachricht: ${card.name} wurde vorübergehend gesperrt.`);
+      showMessage(byId("lock-action-result"), "Die Sperre wirkt sofort.", "[US-214 AK4]");
+      render();
+    }
+
+    function unlockCard(method) {
+      const card = lockCard();
+      if (card.status !== "vorübergehend gesperrt") return;
+      card.status = "aktiv";
+      card.lockedDays = 0;
+      card.reminded = false;
+      showCardStatePush(`Push-Nachricht: ${card.name} wurde mit ${method} entsperrt.`);
+      showMessage(byId("lock-action-result"), `Entsperrung mit ${method} bestätigt.`, "[US-214 AK5]");
+      render();
+    }
+
+    function simulateScheduledPayment(type) {
+      const card = lockCard();
+      if (card.status === "aktiv") return;
+      showMessage(
+        byId("scheduled-payment-result"),
+        `${type} wurde trotz gesperrter Karte ausgeführt.`,
+        "[US-214 AK3]"
+      );
+    }
+
+    function simulateLockDays(days) {
+      const card = lockCard();
+      if (card.status !== "vorübergehend gesperrt") return;
+
+      card.lockedDays += days;
+      if (!card.reminded && card.lockedDays >= 14) {
+        card.reminded = true;
+        showMessage(
+          byId("lock-action-result"),
+          "Erinnerung: Die vorübergehend gesperrte Karte bleibt gesperrt.",
+          "[US-214 AK8]"
+        );
+      }
+
+      if (card.lockedDays >= 30) {
+        card.status = "endgültig gesperrt";
+        showMessage(
+          byId("lock-action-result"),
+          "Nach 30 Tagen wurde die Karte automatisch endgültig gesperrt.",
+          "[US-218 AK3]"
+        );
+      }
+      render();
+    }
+
+    function requestPermanentLock() {
+      const card = lockCard();
+      if (card.status === "endgültig gesperrt") return;
+      permanentLockPending = true;
+      showMessage(
+        byId("permanent-lock-result"),
+        "Vor der endgültigen Sperre ist eine Bestätigung erforderlich.",
+        "[US-218 AK1]"
+      );
+      renderLockState();
+    }
+
+    function confirmPermanentLock() {
+      const card = lockCard();
+      if (!permanentLockPending || card.status === "endgültig gesperrt") return;
+      permanentLockPending = false;
+      card.status = "endgültig gesperrt";
+      card.lockedDays = 0;
+      showCardStatePush(`Push-Nachricht: ${card.name} wurde endgültig gesperrt.`);
+      showMessage(
+        byId("permanent-lock-result"),
+        "Endgültige Sperre bestätigt. Sie kann nicht rückgängig gemacht werden.",
+        "[US-218 AK1] [US-218 AK2]"
+      );
+      render();
+    }
+
+    function simulatePayment(kind) {
+      const amountInput = byId("payment-amount");
+      const merchantInput = byId("payment-merchant");
+      if (!amountInput.reportValidity() || !merchantInput.reportValidity()) return;
+
+      const card = paymentCard();
+      const blocked = card.type === "Debitkarte" && card.status !== "aktiv";
+      const onlineDisabled = kind === "online" && !card.onlinePayments;
+      if (blocked) {
+        showMessage(
+          byId("payment-result"),
+          "Zahlung abgelehnt: Die Karte ist gesperrt.",
+          "[US-214 AK2]"
+        );
+      } else if (onlineDisabled) {
+        showMessage(
+          byId("payment-result"),
+          "Zahlung abgelehnt: Online-Zahlungen sind ausgeschaltet.",
+          "[US-216 AK1]"
+        );
+      } else if (kind === "counter" && !card.onlinePayments) {
+        showMessage(
+          byId("payment-result"),
+          "Die Einstellung für Online-Zahlungen betrifft Zahlungen an der Kasse nicht.",
+          "[US-216 AK2]"
+        );
+      } else {
+        showMessage(
+          byId("payment-result"),
+          "Für diese Testzahlung ist kein Ablehnungsfall aus den Kriterien aktiv.",
+          "[US-214 AK2] [US-216 AK1] [US-216 AK2]"
+        );
+      }
+
+      if (byId("payment-push-toggle").checked) {
+        const amount = Number(amountInput.value).toLocaleString("de-DE");
+        showMessage(
+          byId("transaction-push-result"),
+          `Push-Nachricht: ${amount} EUR bei ${merchantInput.value}.`,
+          "[US-217 AK1]"
+        );
+      } else {
+        showMessage(
+          byId("transaction-push-result"),
+          "Push-Nachrichten bei Kartenzahlungen sind ausgeschaltet.",
+          "[US-217 AK2]"
+        );
+      }
+    }
+
+    function transferLimitAmount() {
+      const amount = byId("transfer-limit-amount").valueAsNumber;
+      if (!Number.isFinite(amount) || amount < 0) {
+        byId("transfer-limit-amount").reportValidity();
+        return null;
+      }
+      return amount;
+    }
+
+    function lowerTransferLimit() {
+      const amount = transferLimitAmount();
+      if (amount === null) return;
+      showMessage(
+        byId("transfer-limit-result"),
+        `Neues Tageslimit: ${amount.toLocaleString("de-DE")} EUR. Es gilt sofort.`,
+        "[US-213 AK1] [US-213 AK4]"
+      );
+    }
+
+    function raiseTransferLimit() {
+      const amount = transferLimitAmount();
+      if (amount === null) return;
+      if (amount > 10000) {
+        showMessage(
+          byId("transfer-limit-result"),
+          "Keine Erhöhung in der App. Der Kundenservice ruft zurück.",
+          "[US-213 AK3]"
+        );
+        return;
+      }
+      const method = byId("transfer-confirmation").value;
+      showMessage(
+        byId("transfer-limit-result"),
+        `Mit ${method} bestätigt. Neues Tageslimit: ${amount.toLocaleString("de-DE")} EUR. Es gilt sofort.`,
+        "[US-213 AK2] [US-213 AK4]"
+      );
+    }
+
+    function cardLimitAmount() {
+      const input = byId("card-limit-amount");
+      const amount = input.valueAsNumber;
+      if (!Number.isFinite(amount) || amount < 0 || amount > 5000) {
+        input.reportValidity();
+        showMessage(
+          byId("card-limit-result"),
+          "Das Kartenlimit kann bis 5.000 EUR erhöht werden.",
+          "[US-215 AK3]"
+        );
+        return null;
+      }
+      return amount;
+    }
+
+    function lowerCardLimit() {
+      const amount = cardLimitAmount();
+      if (amount === null) return;
+      showMessage(
+        byId("card-limit-result"),
+        `Senkung übernommen: ${amount.toLocaleString("de-DE")} EUR. Sie gilt sofort.`,
+        "[US-215 AK2]"
+      );
+    }
+
+    function raiseCardLimit() {
+      const amount = cardLimitAmount();
+      if (amount === null) return;
+      showMessage(
+        byId("card-limit-result"),
+        `Erhöhung per Fingerabdruck bestätigt: ${amount.toLocaleString("de-DE")} EUR.`,
+        "[US-215 AK1] [US-215 AK3]"
+      );
+    }
+
+    function showPinPlaceholder() {
+      window.clearTimeout(pinTimeout);
+      byId("pin-placeholder").textContent = "[PIN-Platzhalter] ";
+      const badge = document.createElement("span");
+      badge.className = "criteria";
+      badge.textContent = "[US-219 AK1] [US-219 AK2]";
+      byId("pin-placeholder").append(badge);
+      pinTimeout = window.setTimeout(() => {
+        showMessage(byId("pin-placeholder"), "••••", "[US-219 AK2]");
+      }, 10000);
+    }
+
+    byId("lock-card").addEventListener("change", () => {
+      permanentLockPending = false;
+      render();
+    });
+    byId("payment-card").addEventListener("change", renderOnlineSetting);
+    byId("temporary-lock-button").addEventListener("click", setTemporaryLock);
+    byId("unlock-biometric-button").addEventListener("click", () => unlockCard("Biometrie"));
+    byId("unlock-pin-button").addEventListener("click", () => unlockCard("App-PIN"));
+    byId("simulate-direct-debit").addEventListener("click", () => simulateScheduledPayment("Lastschrift"));
+    byId("simulate-standing-order").addEventListener("click", () => simulateScheduledPayment("Dauerauftrag"));
+    byId("simulate-14-days").addEventListener("click", () => simulateLockDays(14));
+    byId("simulate-30-days").addEventListener("click", () => simulateLockDays(30));
+    byId("request-permanent-lock").addEventListener("click", requestPermanentLock);
+    byId("confirm-permanent-lock").addEventListener("click", confirmPermanentLock);
+    byId("cancel-permanent-lock").addEventListener("click", () => {
+      permanentLockPending = false;
+      renderLockState();
+    });
+    byId("simulate-counter-payment").addEventListener("click", () => simulatePayment("counter"));
+    byId("simulate-online-payment").addEventListener("click", () => simulatePayment("online"));
+    byId("toggle-online-payments").addEventListener("click", () => {
+      const card = paymentCard();
+      card.onlinePayments = !card.onlinePayments;
+      render();
+    });
+    byId("lower-transfer-limit").addEventListener("click", lowerTransferLimit);
+    byId("raise-transfer-limit").addEventListener("click", raiseTransferLimit);
+    byId("lower-card-limit").addEventListener("click", lowerCardLimit);
+    byId("raise-card-limit").addEventListener("click", raiseCardLimit);
+    byId("show-pin").addEventListener("click", showPinPlaceholder);
+    byId("order-replacement-card").addEventListener("click", () => {
+      const card = lockCard();
+      if (card.status !== "endgültig gesperrt") return;
+      showMessage(
+        byId("replacement-card-result"),
+        "Simulation: Bestellung über REST-API an den Kartenprozessor; Versand an [hinterlegte Adresse].",
+        "[US-220 AK1] [US-220 AK2]"
+      );
+    });
+
+    render();
+  </script>
+</body>
+</html>
