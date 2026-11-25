@@ -1,29 +1,30 @@
 ---
 name: stories-pruefen
-description: Prüft eine einzelne User Story anhand V1 bis V6. Nur verwenden, wenn der Nutzer diesen Skill selbst aufruft.
+description: Prüft User Stories einzeln anhand V1 bis V6. Nur verwenden, wenn der Nutzer diesen Skill ausdrücklich aufruft.
 ---
 
 # Skill: stories-pruefen
 
-## Aktivierung
-- Starte diesen Skill nur nach ausdrücklicher Selbstaufrufung durch den Nutzer. Quelle: Auftrag des Nutzers; Zitat: „startet nur, wenn ich ihn selbst aufrufe.“
-- Prüfe nur eine einzelne User Story; vergleiche nicht mehrere Dokumente miteinander. Quelle: Auftrag des Nutzers; Zitat: „prüft jede Story einzeln, nicht die Konsistenz zwischen mehreren Dokumenten.“
-- Verwende die Checkliste [checkliste.md](checkliste.md). Quelle: Auftrag des Nutzers; Zitat: „mit Anleitung und Checkliste.“
+## Aktivierung und Umfang
+- Starte den Skill nur nach ausdrücklichem Aufruf durch den Nutzer. Quelle: Auftrag des Nutzers; Zitat: „startet nur, wenn ich ihn selbst aufrufe.“
+- Prüfe jede vom Nutzer benannte Story einzeln. Quelle: Auftrag des Nutzers; Zitat: „prüft jede Story einzeln.“
+- Vergleiche keine Story mit anderen Dokumenten und prüfe keine dokumentübergreifende Konsistenz. Quelle: Auftrag des Nutzers; Zitat: „nicht die Konsistenz zwischen mehreren Dokumenten.“
+- Verwende für jede Story die Checkliste [checkliste.md](checkliste.md). Quelle: Auftrag des Nutzers; Zitat: „mit Anleitung und Checkliste.“
 
 ## Vorgehen
-- Ermittle die zu prüfende Story aus dem vom Nutzer benannten Dokument. Quelle: Auftrag des Nutzers; Zitat: „mit dem ich User Stories prüfen lasse.“
-- Prüfe für diese Story ausschließlich V1 bis V6; kennzeichne jede Nichtprüfung unter „Nicht geprüft“. Quelle: Auftrag des Nutzers; Zitat: „Die Checkliste hat sechs Kriterien V1 bis V6.“
-- Prüfe nur den Inhalt der einzelnen Story und deren dort genannten Akzeptanzkriterien. Quelle: Auftrag des Nutzers; Zitat: „prüft jede Story einzeln.“
-- Gib keine Korrekturen aus. Quelle: Auftrag des Nutzers; Zitat: „ohne Korrekturen.“
-- Nutze Fundstellen und wörtliche Zitate von höchstens 15 Wörter. Quelle: Auftrag des Nutzers; Zitat: „Hinweise mit Zitat.“
+- Prüfe die Story und ihre Akzeptanzkriterien anhand jedes der sechs Kriterien V1 bis V6. Quelle: Auftrag des Nutzers; Zitat: „sechs Kriterien V1 bis V6.“
+- Gib ausschließlich Hinweise aus, die sich mit einem wörtlichen Zitat aus der Story belegen lassen. Quelle: Auftrag des Nutzers; Zitat: „nur Hinweise mit Zitat.“
+- Formuliere jeden Hinweis als offene Frage und füge keine Korrektur oder Lösung hinzu. Quelle: Auftrag des Nutzers; Zitat: „als Frage, ohne Korrekturen.“
+- Zitiere pro Hinweis höchstens 15 Wörter und nenne die Fundstelle innerhalb der Story. Quelle: Auftrag des Nutzers; Zitat: „mit Zitat.“
+- Trage in `Bewertung (Mensch)` nichts ein. Quelle: Auftrag des Nutzers; Zitat: „Bewertung (Mensch) bleibt leer.“
 
 ## Ausgabe
-Erstelle genau diese Struktur:
+Gib genau diese Tabelle aus:
 
 | Nr | Story | Kriterium | Zitat | Hinweis | Bewertung (Mensch) |
 |---|---|---|---|---|---|
 
-- Jede Befundzeile muss als Frage formuliert sein. Quelle: Auftrag des Nutzers; Zitat: „nur Hinweise mit Zitat, als Frage.“
-- Die Spalte `Bewertung (Mensch)` bleibt leer. Quelle: Auftrag des Nutzers; Zitat: „Bewertung (Mensch) bleibt leer.“
-- Unter der Tabelle füge den Abschnitt `Ohne Befund` ein. Quelle: Auftrag des Nutzers; Zitat: „darunter „Ohne Befund“.“
-- Unter „Ohne Befund“ füge den Abschnitt `Nicht geprüft` ein und benenne dort jede Nichtprüfung. Quelle: Auftrag des Nutzers; Zitat: „darunter „Nicht geprüft“.“
+- Verwende eine Zeile pro Hinweis; `Nr` nummeriert die Hinweise, `Story` benennt die Story und `Kriterium` das betroffene Kriterium V1 bis V6. Quelle: Auftrag des Nutzers; Zitat: „Ergebnis ist eine Tabelle.“
+- Lass die Zelle unter `Bewertung (Mensch)` in jeder Zeile leer. Quelle: Auftrag des Nutzers; Zitat: „Bewertung (Mensch) bleibt leer.“
+- Führe unter der Tabelle `Ohne Befund` auf und nenne dort die geprüften Kriterien ohne Hinweis, je Story. Quelle: Auftrag des Nutzers; Zitat: „darunter „Ohne Befund“.“
+- Führe anschließend `Nicht geprüft` auf und nenne dort alles, was nicht geprüft wurde. Quelle: Auftrag des Nutzers; Zitat: „darunter „Nicht geprüft“.“

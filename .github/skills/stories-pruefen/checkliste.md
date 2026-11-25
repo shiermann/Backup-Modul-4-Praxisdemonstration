@@ -1,31 +1,33 @@
 # Checkliste V1 bis V6
 
+Prüfe jede Story für sich anhand ihres Textes und ihrer Akzeptanzkriterien. Ziehe keine anderen Dokumente zum Vergleich heran.
+
 ## V1 Verständlich
-- Prüffrage: Ist die Story für die Zielrolle eindeutig lesbar und ist ihr Nutzen verständlich?
-- Warnzeichen: Unklare Rolle, mehrdeutiger Zweck oder unverständliche Fachbegriffe.
-- Quelle: Auftrag des Nutzers; Zitat: „Kriterium Verständlich.“
+- Prüffrage: Sind Rolle, gewünschte Fähigkeit und Nutzen der Story verständlich?
+- Warnzeichen: Unklare Rollen, unverständliche Begriffe oder nicht nachvollziehbarer Nutzen.
+- Quelle: Auftrag des Nutzers; Zitat: „Verständlich.“
 
 ## V2 Eindeutig
-- Prüffrage: Sind Aussage und Akzeptanzkriterien in einem eindeutig interpretierbaren Sinn formuliert?
-- Warnzeichen: Mehrdeutige Begriffe, offene Alternativen oder widersprüchliche Bedingungen.
-- Quelle: Auftrag des Nutzers; Zitat: „Kriterium Eindeutig.“
+- Prüffrage: Lässt die Story jeweils nur eine klare Bedeutung zu?
+- Warnzeichen: Mehrdeutige Formulierungen, unbestimmte Bezüge oder ungeklärte Alternativen.
+- Quelle: Auftrag des Nutzers; Zitat: „Eindeutig.“
 
 ## V3 Prüfbar
-- Prüffrage: Kann jedes Akzeptanzkriterium durch beobachtbares Verhalten nachgewiesen werden?
-- Warnzeichen: Nicht messbare Aussagen, fehlende Ausgangslage oder fehlender Sollzustand.
-- Quelle: Auftrag des Nutzers; Zitat: „Kriterium Prüfbar.“
+- Prüffrage: Lässt sich anhand der Story und ihrer Akzeptanzkriterien nachvollziehbar feststellen, ob das gewünschte Verhalten eintritt?
+- Warnzeichen: Nicht beobachtbare Ergebnisse, fehlende Bedingungen oder nicht überprüfbare Begriffe.
+- Quelle: Auftrag des Nutzers; Zitat: „Prüfbar.“
 
 ## V4 Konsistent
-- Prüffrage: Sind Story und Akzeptanzkriterien innerhalb der Story widerspruchsfrei?
-- Warnzeichen: Gegensätzliche Aussagen oder widersprüchliche Zustände in derselben Story.
-- Quelle: Auftrag des Nutzers; Zitat: „Kriterium Konsistent.“
+- Prüffrage: Widersprechen sich die Aussagen innerhalb dieser Story oder ihrer Akzeptanzkriterien?
+- Warnzeichen: Unvereinbare Zustände, Bedingungen oder Ergebnisse innerhalb derselben Story.
+- Quelle: Auftrag des Nutzers; Zitat: „Konsistent.“
 
 ## V5 Vollständig
-- Prüffrage: Enthält die Story alle für diesen Prüflauf erforderlichen Angaben und Akzeptanzkriterien?
-- Warnzeichen: Unvollständige Kriterien, offene Punkte oder fehlende benannte Angaben.
-- Quelle: Auftrag des Nutzers; Zitat: „Kriterium Vollständig.“
+- Prüffrage: Sind die Angaben und Akzeptanzkriterien enthalten, die zum Verständnis und zur Prüfung dieser Story erforderlich sind?
+- Warnzeichen: Fehlende Bedingungen, Ergebnisse oder ausdrücklich offene Angaben, die das Verständnis oder die Prüfung verhindern.
+- Quelle: Auftrag des Nutzers; Zitat: „Vollständig.“
 
 ## V6 Fachlich und im Umfang
-- Prüffrage: Passt die Story zum Kartenumfang und verwendet sie die Fachbegriffe aus dem Glossar?
-- Warnzeichen: Ausgeschlossene Karte, unzulässiger Fachbegriff oder fehlende Zuordnung zum Umfang.
-- Quelle: Auftrag des Nutzers; Zitat: „Fachlich und im Umfang“.
+- Prüffrage: Ist die Story fachlich nachvollziehbar und ist ihr Umfang anhand ihres eigenen Textes erkennbar?
+- Warnzeichen: Fachlich unstimmige Aussagen, unklare Abgrenzung oder mehrere nicht zusammengehörige Ziele in einer Story.
+- Quelle: Auftrag des Nutzers; Zitat: „Fachlich und im Umfang.“
